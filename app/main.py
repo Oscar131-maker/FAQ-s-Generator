@@ -22,43 +22,42 @@ app = FastAPI()
 def on_startup():
     create_db_and_tables()
     # Migration Logic (Seed data if empty)
-    with Session(from app.database import engine) as session: # Need import inside or adjust imports
-        from app.database import engine
-        with Session(engine) as session:
-            # Seed Prompts
-            if not session.exec(select(Prompt)).first():
-                logger.info("Seeding Prompts from file...")
-                if os.path.exists("prompts.json"):
-                    try:
-                        with open("prompts.json", "r", encoding="utf-8") as f:
-                            data = json.load(f)
-                            session.add(Prompt(key="claude", content=data.get("system_prompt_claude", "")))
-                            session.add(Prompt(key="gemini", content=data.get("system_prompt_gemini", "")))
-                            session.commit()
-                    except: pass
-            
-            # Seed Templates
-            if not session.exec(select(Template)).first():
-                logger.info("Seeding Templates from files...")
-                if os.path.exists("templates/code"):
-                    import os
-                    for f in os.listdir("templates/code"):
-                        if f.endswith(".html"):
-                            name = f.replace(".html", "").replace("_", " ").title()
-                            # Read HTML
-                            with open(f"templates/code/{f}", "r", encoding="utf-8") as hf:
-                                html_content = hf.read()
-                            
-                            # Read Image
-                            img_name = f.replace(".html", ".png")
-                            img_path = f"templates/img/{img_name}"
-                            img_data = b""
-                            if os.path.exists(img_path):
-                                with open(img_path, "rb") as imgf:
-                                    img_data = imgf.read()
-                            
-                            session.add(Template(name=name, html_content=html_content, image_data=img_data))
-                    session.commit()
+    from app.database import engine
+    with Session(engine) as session:
+        # Seed Prompts
+        if not session.exec(select(Prompt)).first():
+            logger.info("Seeding Prompts from file...")
+            if os.path.exists("prompts.json"):
+                try:
+                    with open("prompts.json", "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        session.add(Prompt(key="claude", content=data.get("system_prompt_claude", "")))
+                        session.add(Prompt(key="gemini", content=data.get("system_prompt_gemini", "")))
+                        session.commit()
+                except Exception as e:
+                    logger.error(f"Error seeding prompts: {e}")
+        
+        # Seed Templates
+        if not session.exec(select(Template)).first():
+            logger.info("Seeding Templates from files...")
+            if os.path.exists("templates/code"):
+                for f in os.listdir("templates/code"):
+                    if f.endswith(".html"):
+                        name = f.replace(".html", "").replace("_", " ").title()
+                        # Read HTML
+                        with open(f"templates/code/{f}", "r", encoding="utf-8") as hf:
+                            html_content = hf.read()
+                        
+                        # Read Image
+                        img_name = f.replace(".html", ".png")
+                        img_path = f"templates/img/{img_name}"
+                        img_data = b""
+                        if os.path.exists(img_path):
+                            with open(img_path, "rb") as imgf:
+                                img_data = imgf.read()
+                        
+                        session.add(Template(name=name, html_content=html_content, image_data=img_data))
+                session.commit()
 
 
 # Auth Configuration
