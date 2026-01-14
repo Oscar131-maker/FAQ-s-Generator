@@ -308,7 +308,7 @@ async def generate_faqs(request: GenerateRequest, current_user: str = Depends(ge
         web_content = ""
         if request.source_type == "url":
             logger.info("Scraping URL...")
-            scrape_result = scraper.scrape(request.source_content)
+            scrape_result = await scraper.scrape(request.source_content)
             if not scrape_result:
                 raise HTTPException(status_code=400, detail="Failed to scrape URL or invalid content.")
             web_content = scrape_result.get("full_text", "")

@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from lxml import html
 import requests as std_requests
 from curl_cffi import requests as cffi_requests
-from playwright.sync_api import sync_playwright
+
 
 class UltimateScraper:
     def __init__(self):
@@ -92,45 +92,48 @@ class UltimateScraper:
             print(f"      ⚠️ Nivel 2 falló: {str(e)}")
             return None
 
-    def _level_3_nuclear(self, url):
+    async def _level_3_nuclear(self, url):
         print("   ☢️ Escalando a Nivel 3 (Playwright Browser)...")
         try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
-                context = browser.new_context(
+            from playwright.async_api import async_playwright
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(headless=True)
+                context = await browser.new_context(
                     user_agent=random.choice(self.user_agents),
                     viewport={'width': 1920, 'height': 1080}
                 )
-                context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+                await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
                 
-                page = context.new_page()
+                page = await context.new_page()
                 try:
-                    page.goto(url, wait_until="domcontentloaded", timeout=30000)
-                    time.sleep(2)
-                    content = page.content()
+                    await page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                    await page.wait_for_timeout(2000)
+                    content = await page.content()
                     
                     result = self._process_html(content, url)
                     
-                    browser.close()
+                    await browser.close()
                     return result
                 except Exception as inner_e:
-                    browser.close()
+                    await browser.close()
                     raise inner_e
         except Exception as e:
             print(f"      ❌ Nivel 3 falló: {str(e)}")
             return None
 
-    def scrape(self, url):
+    async def scrape(self, url):
         final_url = self._normalize_url(url)
         print(f"\n🚀 Iniciando extracción para: {final_url}")
         
+        # Level 1 and 2 are sync, running them directly is "blocking" but fast enough or acceptable
+        # If we wanted perfection we'd run them in executor, but let's keep it simple
         result = self._level_1_standard(final_url)
         if result: return result
         
         result = self._level_2_stealth(final_url)
         if result: return result
         
-        result = self._level_3_nuclear(final_url)
+        result = await self._level_3_nuclear(final_url)
         if result: return result
         
         return None
