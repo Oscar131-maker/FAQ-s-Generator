@@ -91,7 +91,27 @@ class TemplateInfo(BaseModel):
     id: int
     name: str
     html_path: str = "" # Deprecated but keep for frontend compatibility (hack) or remove
-    img_url: str # Using base64 data URI or Serve endpoint
+    img_path: str # Changed back to match frontend expectation
+
+@app.get("/api/templates", response_model=List[TemplateInfo])
+async def get_templates(current_user: str = Depends(get_current_user), session: Session = Depends(get_session)):
+    templates = session.exec(select(Template)).all()
+    result = []
+    
+    for t in templates:
+        # Create a URL endpoint to serve the image? 
+        # Or just embed base64 for simplicity in frontend (it's robust for migration)
+        # Assuming images are small previews (~50-100KB)
+        img_b64 = base64.b64encode(t.image_data).decode('utf-8')
+        img_src = f"data:image/png;base64,{img_b64}" # Assume png/jpeg irrelevant for display mostly
+        
+        result.append(TemplateInfo(
+            id=t.id,
+            name=t.name,
+            html_path="", # No longer useful
+            img_path=img_src
+        ))
+    return result
 
 class PromptsData(BaseModel):
     system_prompt_claude: str
@@ -194,25 +214,7 @@ async def delete_template(template_id: int, current_user: str = Depends(get_curr
     session.commit()
     return {"status": "deleted"}
 
-@app.get("/api/templates", response_model=List[TemplateInfo])
-async def get_templates(current_user: str = Depends(get_current_user), session: Session = Depends(get_session)):
-    templates = session.exec(select(Template)).all()
-    result = []
-    
-    for t in templates:
-        # Create a URL endpoint to serve the image? 
-        # Or just embed base64 for simplicity in frontend (it's robust for migration)
-        # Assuming images are small previews (~50-100KB)
-        img_b64 = base64.b64encode(t.image_data).decode('utf-8')
-        img_src = f"data:image/png;base64,{img_b64}" # Assume png/jpeg irrelevant for display mostly
-        
-        result.append(TemplateInfo(
-            id=t.id,
-            name=t.name,
-            html_path="", # No longer useful
-            img_url=img_src
-        ))
-    return result
+
 
 # Endpoint for History
 @app.get("/api/history", response_model=List[HistoryItem])

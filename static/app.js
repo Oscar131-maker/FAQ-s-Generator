@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTemplateView() {
         if (state.templates.length === 0) return;
         const tmpl = state.templates[state.currentTemplateIndex];
-        els.templateImg.src = tmpl.img_path + '?t=' + new Date().getTime(); // Cache bust
+        els.templateImg.src = tmpl.img_path;
         els.templateImg.alt = tmpl.name;
         els.templateName.textContent = tmpl.name;
     }
