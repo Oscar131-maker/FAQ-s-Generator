@@ -243,6 +243,7 @@ async def save_history(item: HistoryItem, current_user: str = Depends(get_curren
     # Frontend sends an ID timestamp usually
     
     # Store
+    logger.info(f"Saving history for user {current_user}: {item.inputs.get('keyword', 'No Keyword')}")
     new_h = History(
         user_id=current_user,
         date=item.date,
@@ -253,6 +254,7 @@ async def save_history(item: HistoryItem, current_user: str = Depends(get_curren
     )
     session.add(new_h)
     session.commit()
+    logger.info(f"History saved with ID: {new_h.id}")
     return {"status": "success", "id": new_h.id}
 
 @app.delete("/api/history/{id}")
