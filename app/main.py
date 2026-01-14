@@ -250,7 +250,7 @@ async def save_history(item: HistoryItem, current_user: str = Depends(get_curren
         keyword=item.inputs.get("keyword", ""),
         inputs_json=json.dumps(item.inputs),
         result_html=item.result,
-        created_at_ts=int(item.id) if item.id else 0 # Use frontend TS or generated
+        created_at_ts=int(item.id // 1000) if item.id else 0 # Use frontend TS or generated, convert to seconds
     )
     session.add(new_h)
     session.commit()
