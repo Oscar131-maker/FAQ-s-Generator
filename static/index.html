@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ's Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Column 1: Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                    </path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                FAQ's Generator
+            </div>
+
+            <button class="new-faq-btn" id="btnRecet">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Generar nuevos FAQ's
+            </button>
+
+            <div class="history-list" id="historyList">
+                <!-- History Items will be injected here -->
+            </div>
+
+            <button class="settings-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+                Settings
+            </button>
+        </div>
+
+        <!-- Column 2: Inputs -->
+        <div class="main-content">
+            <div class="input-group">
+                <label>Palabra clave principal</label>
+                <input type="text" id="keywordInput" placeholder="Ej. Agencia de Marketing Digital">
+            </div>
+
+            <div class="input-group">
+                <label>Brief del cliente</label>
+                <textarea id="briefInput"
+                    placeholder="Describe los dolores, deseos y desafíos del cliente..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Fuente de contenido</label>
+                <div class="source-toggle">
+                    <label class="radio-label">
+                        <input type="radio" name="sourceType" value="url" checked>
+                        URL
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="sourceType" value="text">
+                        Texto Completo
+                    </label>
+                </div>
+            </div>
+
+            <div class="input-group" id="urlInputContainer">
+                <label>URL para analizar</label>
+                <input type="text" id="urlInput" placeholder="https://ejemplo.com">
+            </div>
+
+            <div class="input-group" id="textInputContainer" style="display: none;">
+                <label>Texto completo del sitio</label>
+                <textarea id="textInput" placeholder="Pega aquí el contenido del sitio web..."></textarea>
+            </div>
+        </div>
+
+        <!-- Column 3: Templates -->
+        <div class="right-sidebar">
+            <div class="template-section">
+                <div class="template-header">
+                    <h3>Plantilla FAQ's</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" id="prevTemplate">&lt;</button>
+                        <button class="nav-btn" id="nextTemplate">&gt;</button>
+                    </div>
+                </div>
+
+                <div class="template-preview">
+                    <!-- Image injected via JS -->
+                    <img id="templateImg" src="" alt="Template Preview">
+                </div>
+                <div class="template-name" id="templateName">Cargando...</div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-generate" id="btnGenerate">Generar FAQs</button>
+                <button class="btn-view" id="btnView" disabled>Ver resultados</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Results -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>HTML Final Generado</h3>
+                <button class="close-modal" id="btnCloseModal">&times;</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="btnDownload">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Descargar código
+                </button>
+                <button class="btn-secondary" id="btnCopy">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copiar
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea class="result-area" id="resultCode" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="close-modal" id="btnCloseSettings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="prompts">Prompts</button>
+                    <button class="tab-btn" data-tab="templates">Plantillas</button>
+                </div>
+
+                <!-- Tab: Prompts -->
+                <div class="tab-content active" id="tab-prompts">
+                    <div class="form-group">
+                        <label>System Prompt (Generar Textos - Claude)</label>
+                        <textarea id="promptClaude" style="height: 150px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>System Prompt (Generar HTML - Gemini)</label>
+                        <textarea id="promptGemini" style="height: 150px;"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-primary" id="btnSavePrompts">Guardar Prompts</button>
+                    </div>
+                </div>
+
+                <!-- Tab: Templates -->
+                <div class="tab-content" id="tab-templates">
+                    <div class="template-list" id="settingsTemplateList">
+                        <!-- Injected via JS -->
+                    </div>
+
+                    <h3>Añadir / Editar Plantilla</h3>
+                    <div class="form-group">
+                        <label>Código HTML (Gutenberg)</label>
+                        <textarea id="tmplHtml" style="height: 100px;" placeholder="<div>...</div>"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen Preview (PNG)</label>
+                        <input type="file" id="tmplImg" accept="image/png, image/jpeg">
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-secondary" id="btnClearTmplForm">Limpiar</button>
+                        <button class="btn-primary" id="btnSaveTemplate">Guardar Plantilla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal-overlay" id="alertModal" style="z-index: 2000;">
+        <div class="alert-modal-content">
+            <div class="alert-title" id="alertTitle">Título</div>
+            <div class="alert-message" id="alertMessage">Mensaje</div>
+            <div class="alert-actions" id="alertActions">
+                <!-- Injected Buttons -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

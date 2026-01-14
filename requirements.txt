@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+trafilatura
+lxml
+requests
+curl_cffi
+playwright
+openai
+google-genai
+python-dotenv
+jinja2
+python-jose[cryptography]
+passlib[bcrypt]
+sqlmodel
+psycopg2-binary
